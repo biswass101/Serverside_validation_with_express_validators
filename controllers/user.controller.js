@@ -1,12 +1,15 @@
+const User = require('../models/user.model')
 
 //name, email, password, dob
-const registerUser = (req, res) => {
+const registerUser = async (req, res) => {
     try {
         const {name, email, password, dob} = req.body
 
-        const newUser = {
+        const newUser = new User({
             name, email, password, dob
-        }
+        }) 
+
+        await newUser.save()
 
         res.status(200).json({
             message: "User was created",
@@ -17,16 +20,24 @@ const registerUser = (req, res) => {
     }
 }
 
-const logInUser = (req, res) => {
+const logInUser = async (req, res) => {
     try {
         const {email, password} = req.body
-        if(email === 'biswassnaeemcse@gmail.com' && password === 'bin101Naeem') {
-            res.status(200).json({
-                message: "User was loggedIn",
-            })
+        const findUser = await User.findOne({email: email})
+        if(findUser) {
+            if(email === findUser.email && password === findUser.password)
+            {
+                res.status(200).json({
+                    message: 'User was loggedIn'
+                })
+            } else {
+                res.status(400).json({
+                    message: 'wrong password. Try again!'
+                })
+            }
         } else {
             res.status(400).json({
-                message: "email/password is wrong",
+                message: "user not found"
             })
         }
         

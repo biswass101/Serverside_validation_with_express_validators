@@ -7,8 +7,8 @@ exports.userRegistrationValidators = [
      .withMessage("Name is missing")
      .isLength({min: 5})
      .withMessage("name must have at least 5 characters")
-     .isLength({max: 10})
-     .withMessage("Name can have at most 10 characters")
+     .isLength({max: 100})
+     .withMessage("Name can have at most 100 characters")
     ,
     check("email")
      .trim()

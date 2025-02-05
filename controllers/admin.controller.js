@@ -1,10 +1,14 @@
-const registerAdmin = (req, res) => {
+const Admin = require('../models/admin.model')
+
+const registerAdmin = async (req, res) => {
     try {
         const {name, email, password} = req.body
 
-        const newAdmin = {
-            name, email,password
-        }
+        const newAdmin = new Admin({
+            name, email, password
+        })
+
+        await newAdmin.save()
 
         res.status(201).json({
             message: "Admin was created",
@@ -17,16 +21,24 @@ const registerAdmin = (req, res) => {
     }
 }
 
-const loginAdmin = (req, res) => {
+const loginAdmin = async (req, res) => {
     try {
         const {email, password} = req.body
-        if(email === 'biswassnaeemcse@gmail.com' && password === 'bin101Naeem') {
-            res.status(200).json({
-                message: 'Admin was loggedIN'
-            })
+        const findAdmin = await Admin.findOne({email: email})
+        if(findAdmin) {
+            if(email === findAdmin.email && password === findAdmin.password)
+            {
+                res.status(200).json({
+                    message: 'Admin was loggedIn'
+                })
+            } else {
+                res.status(400).json({
+                    message: 'wrong password. Try again!'
+                })
+            }
         } else {
             res.status(400).json({
-                message: "email/password is wrong"
+                message: "Admin not found"
             })
         }
     } catch (error) {
